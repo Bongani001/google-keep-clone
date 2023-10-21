@@ -21,6 +21,7 @@ class Note {
       this.$modalForm = document.querySelector("#modal-form");
       this.$modalTitle = document.querySelector("#modal-title");
       this.$modalText = document.querySelector("#modal-text");
+      this.$closeModalForm = document.querySelector("#modal-btn");
       
       this.addEventListeners();
       this.displayNotes();
@@ -31,6 +32,7 @@ class Note {
             this.handleFormClick(event);
             this.closeModal(event);
             this.openModal(event);
+            this.handleArchiving(event);
         })
 
         this.$form.addEventListener("submit", (event) => {
@@ -39,6 +41,10 @@ class Note {
             const text = this.$noteText.value;
             this.closeActiveForm();
             this.addNote({title, text});
+        })
+
+        this.$modalForm.addEventListener("submit", (event) => {
+            event.preventDefault();
         })
     }
 
@@ -71,8 +77,8 @@ class Note {
 
     openModal(event) {
         const $selectedNote = event.target.closest(".note");
-        this.selectedNoteId = $selectedNote.id;
-        if($selectedNote) {
+        // this.selectedNoteId = $selectedNote.id;
+        if($selectedNote && !event.target.closest(".archive")) {
             this.selectedNoteId = $selectedNote.id;
             this.$modalTitle.value = $selectedNote.children[1].innerText;
             this.$modalText.value = $selectedNote.children[2].innerText;
@@ -82,10 +88,19 @@ class Note {
 
     closeModal(event) {
         const isModalFormClicked = this.$modalForm.contains(event.target);
-        if(!isModalFormClicked && this.$modal.classList.contains("open-modal")) {
+        const isCloseModalBtnClicked = this.$closeModalForm.contains(event.target);
+        if((!isModalFormClicked || isCloseModalBtnClicked) && this.$modal.classList.contains("open-modal")) {
             this.editNote(this.selectedNoteId, {title: this.$modalTitle.value, text: this.$modalText.value});
             this.$modal.classList.remove("open-modal");
         };
+    }
+
+    handleArchiving(event) {
+        const $selectedNote = event.target.closest(".note");
+        if($selectedNote && event.target.closest(".archive")) {
+            this.selectedNoteId = $selectedNote.id;
+            this.deleteNote(this.selectedNoteId);
+        }
     }
   
     addNote({ title, text }) {
@@ -122,6 +137,11 @@ class Note {
         $checkNote.style.visibility = "hidden";
         $noteFooter.style.visibility = "hidden";
     }
+
+    deleteNote(id) {
+        this.notes = this.notes.filter(note => note.id != id);
+        this.displayNotes();
+    }
   
       displayNotes() {
         this.$notes.innerHTML = this.notes.map((note) => 
@@ -151,7 +171,7 @@ class Note {
                         <span class="material-icons-outlined hover small-icon">image</span>
                         <span class="tooltip-text">Add image</span>
                     </div>
-                    <div class="tooltip">
+                    <div class="tooltip archive">
                         <span class="material-icons-outlined hover small-icon">archive</span>
                         <span class="tooltip-text">Archive</span>
                     </div>
@@ -165,10 +185,6 @@ class Note {
           ).join("");
       };
     
-  
-    deleteNote(id) {
-        this.notes = this.notes.filter(note => note.id != id)
-    }
   }
   
   const app = new App();
