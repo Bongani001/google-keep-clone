@@ -185,6 +185,10 @@ FORM CONTAINER
 
 /* ACTIVE FORM */
 
+.active-form {
+    display: none;
+}
+
 .active-form form {
     display: flex;
     flex-direction: column;
@@ -234,8 +238,9 @@ NOTES
 .notes {
     display: flex;
     justify-content: center;
-    margin-top: 30px;
+    margin: 30px 60px 0px 60px;
     gap: 15px;
+    flex-wrap: wrap;
 }
 
 .note {
@@ -246,12 +251,14 @@ NOTES
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     position: relative;
+    cursor: pointer;
 }
 
 .check-circle {
     position: absolute;
     top: -10px;
     left: -10px;
+    visibility: hidden;
 }
 
 .title {
@@ -267,6 +274,7 @@ NOTES
     display: flex;
     justify-content: space-between;
     margin-top: 10px;
+    visibility: hidden;
 }
 
 .note-footer .tooltip {
