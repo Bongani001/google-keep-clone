@@ -189,7 +189,7 @@ FORM CONTAINER
     display: none;
 }
 
-.active-form form {
+.form {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -208,7 +208,7 @@ FORM CONTAINER
     padding-left: 10px;
 }
 
-.active-form form .form-actions {
+.form .form-actions {
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -246,12 +246,17 @@ NOTES
 .note {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     max-height: 430px;
     width: 238px;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     position: relative;
     cursor: pointer;
+}
+
+.note:hover {
+    box-shadow: 1px 1px 5px rgb(0, 0, 0,.4);
 }
 
 .check-circle {
