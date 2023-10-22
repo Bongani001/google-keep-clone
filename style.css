@@ -60,6 +60,7 @@ nav {
     margin: 0 10px;
     border-bottom: 1px solid #dadce0;
     color: #5f6368;
+    z-index: 2;
 }
 
 .logo-area {
@@ -115,11 +116,18 @@ SIDEBAR
 .sidebar {
     position: fixed;
     left: 0px;
-    top: 64px;
+    top: 54px;
     color: #5f6368;
     margin-top: 10px;
     width: 70px;
     overflow: hidden;
+    transition: 0.5s;
+    height: 100%;
+}
+
+.sidebar-hover {
+    box-shadow: 1px 1px 5px rgb(0, 0, 0,.4);
+    background: white;
 }
 
 .sidebar-content {
@@ -134,6 +142,8 @@ SIDEBAR
     padding: 3px 0px 3px 18px;
     border-top-right-radius: 50px;
     border-bottom-right-radius: 50px;
+    cursor: pointer;
+    white-space: nowrap;
 }
 
 .sidebar-item > span + span {
@@ -145,10 +155,24 @@ SIDEBAR
 .active {
     background-color: rgb(254 239 195);
     color: black;
+    border-radius: 50%;
+
 }
 
 .active:hover {
     background-color: rgb(254 239 195);
+}
+
+.sidebar-item:hover {
+    background-color: #f1f3f4;
+}
+
+.sidebar-active-item:hover {
+    background-color: #fef0c3;
+}
+
+.sidebar-active-item {
+    background-color: #fef0c3;
 }
 
 /**************

@@ -10,6 +10,7 @@ class Note {
     constructor() {
       this.notes = [new Note("boy", "cool", "cool")];
       this.selectedNoteId = "";
+      this.miniSidebar = true;
 
       this.$activeForm = document.querySelector(".active-form");
       this.$inactiveForm = document.querySelector(".inactive-form");
@@ -22,6 +23,8 @@ class Note {
       this.$modalTitle = document.querySelector("#modal-title");
       this.$modalText = document.querySelector("#modal-text");
       this.$closeModalForm = document.querySelector("#modal-btn");
+      this.$sidebar = document.querySelector(".sidebar");
+      this.$sidebarActiveItem = document.querySelector(".active-item");
       
       this.addEventListeners();
       this.displayNotes();
@@ -45,6 +48,14 @@ class Note {
 
         this.$modalForm.addEventListener("submit", (event) => {
             event.preventDefault();
+        })
+
+        this.$sidebar.addEventListener("mouseover", (event) => {
+            this.handleToggleSidebar();
+        })
+
+        this.$sidebar.addEventListener("mouseout", (event) => {
+            this.handleToggleSidebar();
         })
     }
 
@@ -122,6 +133,11 @@ class Note {
       this.displayNotes();
     }
 
+    deleteNote(id) {
+        this.notes = this.notes.filter(note => note.id != id);
+        this.displayNotes();
+    }
+
     handleMouseOverNote(element) {
         const $note = document.querySelector("#" + element.id);
         const $checkNote = $note.querySelector(".check-circle");
@@ -138,9 +154,18 @@ class Note {
         $noteFooter.style.visibility = "hidden";
     }
 
-    deleteNote(id) {
-        this.notes = this.notes.filter(note => note.id != id);
-        this.displayNotes();
+    handleToggleSidebar() {
+        if(this.miniSidebar) {
+            this.$sidebar.style.width = "250px";
+            this.$sidebar.classList.add("sidebar-hover");
+            this.$sidebarActiveItem.classList.add("sidebar-active-item");
+            this.miniSidebar = false;
+        } else {
+            this.$sidebar.style.width = "70px";
+            this.$sidebar.classList.remove("sidebar-hover");
+            this.$sidebarActiveItem.classList.remove("sidebar-active-item");
+            this.miniSidebar = true;
+        }
     }
   
       displayNotes() {
