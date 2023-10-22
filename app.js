@@ -8,7 +8,8 @@ class Note {
   
   class App {
     constructor() {
-      this.notes = [new Note("boy", "cool", "cool")];
+      this.notes = JSON.parse(localStorage.getItem("notes")) || [];
+
       this.selectedNoteId = "";
       this.miniSidebar = true;
 
@@ -118,7 +119,7 @@ class Note {
         if(text != "") {
             const newNote = new Note(cuid(), title, text);
             this.notes = [...this.notes, newNote];
-            this.displayNotes();
+            this.render();
         }
     }
   
@@ -130,12 +131,12 @@ class Note {
         }
         return note;
       });
-      this.displayNotes();
+      this.render();
     }
 
     deleteNote(id) {
         this.notes = this.notes.filter(note => note.id != id);
-        this.displayNotes();
+        this.render();
     }
 
     handleMouseOverNote(element) {
@@ -166,6 +167,15 @@ class Note {
             this.$sidebarActiveItem.classList.remove("sidebar-active-item");
             this.miniSidebar = true;
         }
+    }
+
+    saveNotes() {
+        localStorage.setItem("notes", JSON.stringify(this.notes));
+    }
+
+    render() {
+        this.saveNotes();
+        this.displayNotes();
     }
   
       displayNotes() {
