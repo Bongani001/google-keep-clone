@@ -8,27 +8,37 @@ class Note {
   
   class App {
     constructor() {
-      this.notes = JSON.parse(localStorage.getItem("notes")) || [];
+        this.notes = JSON.parse(localStorage.getItem("notes")) || [];
 
-      this.selectedNoteId = "";
-      this.miniSidebar = true;
+        this.selectedNoteId = "";
+        this.miniSidebar = true;
 
-      this.$activeForm = document.querySelector(".active-form");
-      this.$inactiveForm = document.querySelector(".inactive-form");
-      this.$noteTitle = document.querySelector("#note-title");
-      this.$noteText = document.querySelector("#note-text");
-      this.$notes = document.querySelector(".notes");
-      this.$form = document.querySelector("#form");
-      this.$modal = document.querySelector(".modal");
-      this.$modalForm = document.querySelector("#modal-form");
-      this.$modalTitle = document.querySelector("#modal-title");
-      this.$modalText = document.querySelector("#modal-text");
-      this.$closeModalForm = document.querySelector("#modal-btn");
-      this.$sidebar = document.querySelector(".sidebar");
-      this.$sidebarActiveItem = document.querySelector(".active-item");
-      
-      this.addEventListeners();
-      this.displayNotes();
+        this.$activeForm = document.querySelector(".active-form");
+        this.$inactiveForm = document.querySelector(".inactive-form");
+        this.$noteTitle = document.querySelector("#note-title");
+        this.$noteText = document.querySelector("#note-text");
+        this.$notes = document.querySelector(".notes");
+        this.$form = document.querySelector("#form");
+        this.$modal = document.querySelector(".modal");
+        this.$modalForm = document.querySelector("#modal-form");
+        this.$modalTitle = document.querySelector("#modal-title");
+        this.$modalText = document.querySelector("#modal-text");
+        this.$closeModalForm = document.querySelector("#modal-btn");
+        this.$sidebar = document.querySelector(".sidebar");
+        this.$sidebarActiveItem = document.querySelector(".active-item");
+
+        // Initialize the FirebaseUI Widget using Firebase.
+        this.ui = new firebaseui.auth.AuthUI(auth);
+
+        this.ui.start('#firebaseui-auth-container', {
+            signInOptions: [
+              firebase.auth.EmailAuthProvider.PROVIDER_ID
+            ],
+            // Other config options...
+          });
+    
+        this.addEventListeners();
+        this.displayNotes();
     }
 
     addEventListeners() {
