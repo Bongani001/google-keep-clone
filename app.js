@@ -27,18 +27,53 @@ class Note {
         this.$sidebar = document.querySelector(".sidebar");
         this.$sidebarActiveItem = document.querySelector(".active-item");
 
-        // Initialize the FirebaseUI Widget using Firebase.
-        this.ui = new firebaseui.auth.AuthUI(auth);
+        this.$app = document.querySelector("#app");
+        this.$firebaseAuthContainer = document.querySelector("#firebaseui-auth-container");
+        this.$authUserText = document.querySelector(".auth-user");
+        this.$logoutButton = document.querySelector(".logout");
 
+        this.ui = new firebaseui.auth.AuthUI(auth);
+        this.handleAuth();
+    
+        this.addEventListeners();
+        this.displayNotes();
+    }
+
+    handleAuth() {
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+              this.$authUserText.innerText = user.displayName;
+              this.redirectToApp();
+            } else {
+              this.redirectToAuth();
+            }
+          });
+        
+    }
+
+    handleLogout() {
+        firebase.auth().signOut().then(() => {
+            this.redirectToAuth();
+          }).catch((error) => {
+            console.log("ERROR OCCURED:", error);
+          });
+    }
+
+    redirectToApp() {
+        this.$firebaseAuthContainer.style.display = "none";
+        this.$app.style.display = "block";
+    }
+
+    redirectToAuth() {
+        this.$firebaseAuthContainer.style.display = "block";
+        this.$app.style.display = "none";
+        
         this.ui.start('#firebaseui-auth-container', {
             signInOptions: [
               firebase.auth.EmailAuthProvider.PROVIDER_ID
             ],
             // Other config options...
           });
-    
-        this.addEventListeners();
-        this.displayNotes();
     }
 
     addEventListeners() {
@@ -53,8 +88,8 @@ class Note {
             event.preventDefault();
             const title = this.$noteTitle.value;
             const text = this.$noteText.value;
-            this.closeActiveForm();
             this.addNote({title, text});
+            this.closeActiveForm();
         })
 
         this.$modalForm.addEventListener("submit", (event) => {
@@ -68,6 +103,10 @@ class Note {
         this.$sidebar.addEventListener("mouseout", (event) => {
             this.handleToggleSidebar();
         })
+
+        this.$logoutButton.addEventListener("click", (event) => {
+            this.handleLogout();
+        });
     }
 
     handleFormClick(event) {
