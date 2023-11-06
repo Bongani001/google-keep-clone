@@ -8,10 +8,11 @@ class Note {
   
   class App {
     constructor() {
-        this.notes = JSON.parse(localStorage.getItem("notes")) || [];
+        this.notes = [];
 
         this.selectedNoteId = "";
         this.miniSidebar = true;
+        this.userId = "";
 
         this.$activeForm = document.querySelector(".active-form");
         this.$inactiveForm = document.querySelector(".inactive-form");
@@ -42,10 +43,11 @@ class Note {
     handleAuth() {
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
-              this.$authUserText.innerText = user.displayName;
-              this.redirectToApp();
+                this.userId = user.uid;
+                this.$authUserText.innerText = user.displayName;
+                this.redirectToApp();
             } else {
-              this.redirectToAuth();
+                this.redirectToAuth();
             }
           });
         
@@ -62,6 +64,7 @@ class Note {
     redirectToApp() {
         this.$firebaseAuthContainer.style.display = "none";
         this.$app.style.display = "block";
+        this.fetchNotesFromDb();
     }
 
     redirectToAuth() {
@@ -74,6 +77,8 @@ class Note {
                     // User successfully signed in.
                     // Return type determines whether we continue the redirect automatically
                     // or whether we leave that to developer to handle.
+                    // this.userId = authResult.uid;
+                    console.log(authResult.user.uid);
                     this.$authUserText.innerText = user.displayName;
                     this.redirectToApp();
                     return true;
@@ -177,7 +182,7 @@ class Note {
   
     addNote({ title, text }) {
         if(text != "") {
-            const newNote = new Note(cuid(), title, text);
+            const newNote = {id: cuid(), title, text};
             this.notes = [...this.notes, newNote];
             this.render();
         }
@@ -229,8 +234,42 @@ class Note {
         }
     }
 
+    fetchNotesFromDb() {
+        var docRef = db.collection("users").doc(this.userId);
+
+        docRef.get().then((doc) => {
+            if (doc.exists) {
+                console.log("Document data:", doc.data().notes);
+                this.notes = doc.data().notes;
+                this.displayNotes();
+            } else {
+                // doc.data() will be undefined in this case
+                console.log("No such document!");
+                db.collection("users").doc(this.userId).set({
+                    notes: []
+                })
+                    .then(() => {
+                        console.log("user successfully created!");
+                    })
+                    .catch((error) => {
+                        console.error("Error writing document: ", error);
+                    });
+            }
+        }).catch((error) => {
+            console.log("Error getting document:", error);
+            });
+    }
+
     saveNotes() {
-        localStorage.setItem("notes", JSON.stringify(this.notes));
+        db.collection("users").doc(this.userId).set({
+            notes: this.notes
+        })
+            .then(() => {
+                console.log("Document successfully written!");
+            })
+            .catch((error) => {
+                console.error("Error writing document: ", error);
+            });
     }
 
     render() {
